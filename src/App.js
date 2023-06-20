@@ -4,7 +4,6 @@ import {
 	withAuthenticator,
 	Button,
 	Heading,
-	Image,
 	View,
 	Card,
 } from "@aws-amplify/ui-react";
