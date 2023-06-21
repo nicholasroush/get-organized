@@ -69,44 +69,52 @@ const App = ({ signOut, user }) => {
 	}
 
 	async function createTodo() {
-		const data = {
-			title: title,
-			description: description,
-			status: status,
-			dueDate: date,
-		};
-		await API.graphql({
-			query: createTodoMutation,
-			variables: { input: data },
-			authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
-		});
-		fetchNotes();
-		setTitle("");
-		setDescription("");
-		setStatus("Not Started");
-		setDate();
+		if (title === "" || description === "" || date === null) {
+			alert("Please make sure you've completed all available fields.");
+		} else {
+			const data = {
+				title: title,
+				description: description,
+				status: status,
+				dueDate: date,
+			};
+			await API.graphql({
+				query: createTodoMutation,
+				variables: { input: data },
+				authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
+			});
+			fetchNotes();
+			setTitle("");
+			setDescription("");
+			setStatus("Not Started");
+			setDate();
+		}
 	}
 
 	async function updateNote() {
-		const data = {
-			id: editorId,
-			title: title,
-			description: description,
-			status: status,
-			dueDate: date,
-		};
+		if (title === "" || description === "" || date === null) {
+			alert("Please make sure all fields are not empty.");
+		} else {
+			const data = {
+				id: editorId,
+				title: title,
+				description: description,
+				status: status,
+				dueDate: date,
+			};
 
-		await API.graphql({
-			query: updateTodoMutation,
-			variables: { input: data },
-		});
+			await API.graphql({
+				query: updateTodoMutation,
+				variables: { input: data },
+			});
 
-		fetchNotes();
-		setTitle("");
-		setDescription("");
-		setStatus("Not Started");
-		setDate();
-		setOpenEditor(!openEditor);
+			fetchNotes();
+			setTitle("");
+			setDescription("");
+			setStatus("Not Started");
+			setDate();
+			setOpenEditor(!openEditor);
+		}
 	}
 
 	const editNote = ({ id }) => {
@@ -160,9 +168,6 @@ const App = ({ signOut, user }) => {
 			title: "Description",
 			dataIndex: "description",
 			key: "description",
-			sorter: {
-				compare: (a, b) => a.description.localeCompare(b.description),
-			},
 			width: "50%",
 		},
 		{
@@ -233,6 +238,7 @@ const App = ({ signOut, user }) => {
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 						style={{ margin: "1rem", width: "50%" }}
+						required
 					/>
 					<TextArea
 						placeholder='A short description.'
@@ -240,6 +246,7 @@ const App = ({ signOut, user }) => {
 						value={description}
 						onChange={(e) => setDescription(e.target.value)}
 						style={{ margin: "1rem" }}
+						required
 					>
 						<br />
 						<br />
