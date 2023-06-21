@@ -1,0 +1,12 @@
+{
+  "AppSyncApiName": "getorganized",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authgetorganizedd5502b0d",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2023-06-21T00:11:09.607Z"
+}

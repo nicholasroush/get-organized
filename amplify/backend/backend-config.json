@@ -1,4 +1,34 @@
 {
+  "api": {
+    "getorganized": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "getorganizedd5502b0d"
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authgetorganizedd5502b0d"
+            }
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
   "auth": {
     "getorganizedd5502b0d": {
       "customAuth": false,
@@ -23,6 +53,13 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
+    }
+  },
+  "storage": {
+    "lighthalltodouserstorage": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
     }
   }
 }

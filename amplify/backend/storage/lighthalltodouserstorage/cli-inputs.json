@@ -1,0 +1,14 @@
+{
+  "resourceName": "lighthalltodouserstorage",
+  "policyUUID": "da54f167",
+  "bucketName": "getorganized47929965e11d445f964bcd14f0067d51",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

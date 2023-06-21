@@ -14,6 +14,12 @@
     "categories": {
       "auth": {
         "getorganizedd5502b0d": {}
+      },
+      "api": {
+        "getorganized": {}
+      },
+      "storage": {
+        "lighthalltodouserstorage": {}
       }
     }
   }
