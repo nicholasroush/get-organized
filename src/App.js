@@ -15,7 +15,7 @@ import {
 	deleteTodo as deleteTodoMutation,
 	updateTodo as updateTodoMutation,
 } from "./graphql/mutations";
-import { Input, Select, DatePicker, Table, Dropdown } from "antd";
+import { Input, Select, DatePicker, Table, Dropdown, Alert } from "antd";
 import ellipsis from "./imgs/ellipsis.png";
 import EditorModal from "./EditorModal/EditorModal";
 
@@ -55,8 +55,12 @@ const App = ({ signOut, user }) => {
 	const [date, setDate] = useState();
 	const [openEditor, setOpenEditor] = useState(false);
 	const [editorId, setEditorId] = useState();
+	const [submitError, setSubmitError] = useState(false);
+	const [updateError, setUpdateError] = useState(false);
+	const [submitSuccess, setSubmitSuccess] = useState(false);
 	const activeUser = user.username;
 	const username = activeUser.charAt(0).toUpperCase() + activeUser.slice(1);
+	let screenWidth = window.innerWidth;
 
 	useEffect(() => {
 		fetchNotes();
@@ -70,37 +74,48 @@ const App = ({ signOut, user }) => {
 
 	async function createTodo() {
 		if (title === "" || description === "" || date === null) {
-			alert("Please make sure you've completed all available fields.");
+			setSubmitError(true);
+			setTimeout(() => {
+				setSubmitError(false);
+			}, 7000);
 		} else {
 			const data = {
 				title: title,
 				description: description,
 				status: status,
-				dueDate: date,
+				dueDate: date.format("MM/DD/YYYY"),
 			};
 			await API.graphql({
 				query: createTodoMutation,
 				variables: { input: data },
 				authMode: GRAPHQL_AUTH_MODE.AMAZON_COGNITO_USER_POOLS,
 			});
+			setSubmitSuccess(true);
+			setTimeout(() => {
+				setSubmitSuccess(false);
+			}, 7000);
 			fetchNotes();
 			setTitle("");
 			setDescription("");
 			setStatus("Not Started");
-			setDate();
+			setDate(null);
+			setSubmitError(false);
 		}
 	}
 
 	async function updateNote() {
 		if (title === "" || description === "" || date === null) {
-			alert("Please make sure all fields are not empty.");
+			setUpdateError(true);
+			setTimeout(() => {
+				setUpdateError(false);
+			}, 7000);
 		} else {
 			const data = {
 				id: editorId,
 				title: title,
 				description: description,
 				status: status,
-				dueDate: date,
+				dueDate: date.format("MM/DD/YYYY"),
 			};
 
 			await API.graphql({
@@ -112,7 +127,7 @@ const App = ({ signOut, user }) => {
 			setTitle("");
 			setDescription("");
 			setStatus("Not Started");
-			setDate();
+			setDate(null);
 			setOpenEditor(!openEditor);
 		}
 	}
@@ -125,7 +140,6 @@ const App = ({ signOut, user }) => {
 				setTitle(el.title);
 				setDescription(el.description);
 				setStatus(el.status);
-				setDate(el.date);
 			}
 			return el;
 		});
@@ -136,7 +150,7 @@ const App = ({ signOut, user }) => {
 		setNotes(newNotes);
 		await API.graphql({
 			query: deleteTodoMutation,
-			variables: { input: { id } },
+			variables: { input: { id: id } },
 		});
 	}
 
@@ -225,7 +239,45 @@ const App = ({ signOut, user }) => {
 					setDate={setDate}
 					setOpenEditor={setOpenEditor}
 					openEditor={openEditor}
+					updateError={updateError}
 				/>
+			)}
+			{submitError && (
+				<div
+					style={{
+						position: "absolute",
+						zIndex: "1000",
+						top: 0,
+						left: "50%",
+						transform: "translateX(-50%)",
+					}}
+				>
+					<Alert
+						message='Error'
+						description="Please make sure you've completed all available fields."
+						type='error'
+						showIcon
+					/>
+				</div>
+			)}
+			{submitSuccess && (
+				<div
+					style={{
+						position: "absolute",
+						zIndex: "1000",
+						top: 0,
+						left: "50%",
+						transform: "translateX(-50%)",
+						width: "20rem",
+					}}
+				>
+					<Alert
+						message='Success'
+						description='New task added!'
+						type='success'
+						showIcon
+					/>
+				</div>
 			)}
 			<Heading level={1} style={{ margin: "3rem 0" }}>
 				{username}'s Organizer App
@@ -237,7 +289,10 @@ const App = ({ signOut, user }) => {
 						placeholder='Title'
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
-						style={{ margin: "1rem", width: "50%" }}
+						style={{
+							margin: "1rem",
+							width: "50%",
+						}}
 						required
 					/>
 					<TextArea
@@ -245,7 +300,9 @@ const App = ({ signOut, user }) => {
 						allowClear
 						value={description}
 						onChange={(e) => setDescription(e.target.value)}
-						style={{ margin: "1rem" }}
+						style={{
+							margin: "1rem",
+						}}
 						required
 					>
 						<br />
@@ -285,7 +342,7 @@ const App = ({ signOut, user }) => {
 							<DatePicker
 								name='dueDate'
 								allowClear
-								onChange={(date) => setDate(date.format("YYYY-MM-DD"))}
+								onChange={(date) => setDate(date)}
 								style={{ margin: ".5rem 1rem" }}
 							/>
 						</div>
@@ -296,16 +353,16 @@ const App = ({ signOut, user }) => {
 					</Button>
 				</View>
 			</Flex>
-			<View margin='3rem 0'>
+			<View margin='3rem auto'>
 				{notes.length > 0 && (
 					<Flex direction='column' justifyContent='center' alignItems='center'>
-						<Heading level={2}>Current Notes</Heading>
+						<Heading level={2}>Current Tasks</Heading>
 						<Table
 							rowKey='id'
 							bordered
 							dataSource={notes}
 							columns={tableColumns}
-							style={{ width: "60%" }}
+							style={{ width: screenWidth < 670 ? "100%" : "60%" }}
 						/>
 					</Flex>
 				)}

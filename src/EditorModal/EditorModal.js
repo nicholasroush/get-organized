@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@aws-amplify/ui-react";
-import { Input, Select, DatePicker } from "antd";
+import { Input, Select, DatePicker, Alert } from "antd";
 import close from "../imgs/close.png";
 import "./editorModal.css";
 
@@ -32,6 +32,7 @@ const EditorModal = ({
 	setDate,
 	setOpenEditor,
 	openEditor,
+	updateError,
 }) => {
 	const closeModal = () => {
 		setTitle("");
@@ -42,6 +43,24 @@ const EditorModal = ({
 	};
 	return (
 		<div className='modal-container'>
+			{updateError && (
+				<div
+					style={{
+						position: "absolute",
+						zIndex: "1000",
+						top: 0,
+						left: "50%",
+						transform: "translateX(-50%)",
+					}}
+				>
+					<Alert
+						message='Error'
+						description='Please check and make sure all fields are filled in.'
+						type='error'
+						showIcon
+					/>
+				</div>
+			)}
 			<div className='modal-mask' />
 			<div className='modal-content'>
 				<img src={close} alt='CLOSE' onClick={closeModal} />
@@ -126,7 +145,7 @@ const EditorModal = ({
 						<DatePicker
 							name='dueDate'
 							allowClear
-							onChange={(date) => setDate(date.format("YYYY-MM-DD"))}
+							onChange={(date) => setDate(date)}
 							style={{ margin: ".5rem 1rem" }}
 						/>
 					</div>
